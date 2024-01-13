@@ -8,6 +8,10 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.10"
 pydantic = "^2.5.3"
+loguru = "^0.7.2"
+pillow = "^10.2.0"
+imageio = {extras = ["ffmpeg"], version = "^2.33.1"}
+rich = "^13.7.0"
 
 
 [build-system]
