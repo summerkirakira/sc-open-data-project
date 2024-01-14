@@ -1,11 +1,12 @@
 from __future__ import annotations
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from .base_model import UniversalData
 from utils import localizer_cn, localizer_en
 from utils.file_manager import get_cache_dir, get_data_dir, sc, extract_image
 from utils.converter import convert_dds_to_png
+from loguru import logger
 
 cache_dir = get_cache_dir()
 data_dir = get_data_dir("manufacture")
@@ -51,11 +52,12 @@ class ManufactureRaw(BaseModel):
     Logo: str
     LogoFullColor: str
     LogoSimplifiedWhite: str
-    __id: str
-    __path: str
-    __type: str
+    ref: str = Field(..., alias='__id')
+    path: str = Field(..., alias='__path')
+    type: str = Field(..., alias='__type')
 
-    def convert_to_manufacture(self) -> Manufacture:
+
+    def to_manufacture(self) -> Manufacture:
         """Convert a raw manufacture to a manufacture"""
 
         logo_path = ""
@@ -63,13 +65,13 @@ class ManufactureRaw(BaseModel):
         logo_simplified_white_path = ""
 
         if self.Logo != "":
-            logo_path = data_dir / f"{self.__id}.logo.png"
+            logo_path = data_dir / f"{self.ref}.logo.png"
             extract_image(self.Logo, logo_path)
         if self.LogoFullColor != "":
-            logo_full_color_path = data_dir / f"{self.__id}.logo_full_color.png"
+            logo_full_color_path = data_dir / f"{self.ref}.logo_full_color.png"
             extract_image(self.LogoFullColor, logo_full_color_path)
         if self.LogoSimplifiedWhite != "":
-            logo_simplified_white_path = data_dir / f"{self.__id}.logo_simplified_white.png"
+            logo_simplified_white_path = data_dir / f"{self.ref}.logo_simplified_white.png"
             extract_image(self.LogoSimplifiedWhite, logo_simplified_white_path)
 
         return Manufacture(
@@ -84,8 +86,9 @@ class ManufactureRaw(BaseModel):
             chinese_description=localizer_cn.get(self.Localization.Description),
             short_name=localizer_en.get(self.Localization.ShortName),
             chinese_short_name=localizer_cn.get(self.Localization.ShortName),
-            type=self.__type,
-            path=self.__path
+            type=self.type,
+            path=self.path,
+            ref=self.ref
         )
 
 
@@ -99,3 +102,4 @@ class Manufacture(UniversalData):
     short_name: str
     chinese_short_name: str
     path: str
+    type: str = "SCItemManufacturer"

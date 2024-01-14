@@ -2,11 +2,13 @@ from pathlib import Path
 from scdatatools.sc import StarCitizen
 from pathlib import Path
 from loguru import logger
-from converter import convert_dds_to_png
+from .converter import convert_dds_to_png
 import json
+from zipfile import ZipInfo
 
 
 root_dir = Path(__file__).parent.parent
+
 
 def get_cache_dir() -> Path:
     """Get the cache directory for starfab
@@ -30,6 +32,16 @@ def get_data_dir(dir_name: str) -> Path:
     return dir_path
 
 
+def get_json_dir() -> Path:
+    """Get the data directory for starfab
+
+    :param dir_name: The name of the directory
+    :return: The data directory
+    """
+
+    return get_data_dir("cache")
+
+
 def load_sc(sc_path: Path) -> StarCitizen:
     """Load a P4K file from the given path"""
     sc = StarCitizen(sc_path)
@@ -46,7 +58,7 @@ def convert_list_to_dict(list_data: list):
     return new_dict
 
 
-def load_raw_ship_data_from_dict(ship_data: dict) -> dict:
+def load_raw_data_from_dict(ship_data: dict) -> dict:
     """Load a P4K file from the given path"""
     ship_data["Components"] = convert_list_to_dict(ship_data["Components"])
     ship_data["StaticEntityClassData"] = convert_list_to_dict(ship_data["StaticEntityClassData"])
@@ -61,6 +73,15 @@ def get_zip_info_ignore_case(zip_file, name):
     raise KeyError(name)
 
 
+def get_zip_info_by_dir(zip_file, dir_path: str) -> list[ZipInfo]:
+    zip_info_list = []
+
+    for info in zip_file.infolist():
+        if info.filename.startswith(dir_path):
+            zip_info_list.append(info)
+    return zip_info_list
+
+@logger.catch
 def extract_image(filename: str, target_path: Path):
     """Extract an image from the given data"""
     if filename.endswith(".tif"):
