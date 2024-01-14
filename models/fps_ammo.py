@@ -34,28 +34,28 @@ class LightPoolParams(BaseModel):
 
 class PhysType(BaseModel):
     Mass: float
-    __polymorphicType: str
-    __type: str
-    accThrust: float
-    aiNavigationType: str
-    airResistance: float
-    breakableParams: Any
-    constantOrientation: bool
-    decoupleHeading: bool
-    disableGravity: bool
-    gameCollisionClass: Any
-    noImpulse: bool
-    noPathAlignment: bool
-    noRoll: bool
-    noSelfCollision: bool
-    noSpin: bool
-    pierceability: int
-    radius: float
-    rayCollision: bool
-    singleContact: bool
-    surfaceIdName: str
-    thickness: float
-    traceable: bool
+    # __polymorphicType: str
+    # __type: str
+    # accThrust: float
+    # aiNavigationType: str
+    # airResistance: float
+    # breakableParams: Any
+    # constantOrientation: bool
+    # decoupleHeading: bool
+    # disableGravity: bool
+    # gameCollisionClass: Any
+    # noImpulse: bool
+    # noPathAlignment: bool
+    # noRoll: bool
+    # noSelfCollision: bool
+    # noSpin: bool
+    # pierceability: int
+    # radius: float
+    # rayCollision: bool
+    # singleContact: bool
+    # surfaceIdName: str
+    # thickness: float
+    # traceable: bool
 
 
 class PhysicsControllerParams(BaseModel):
@@ -172,7 +172,7 @@ class ProjectileParams(BaseModel):
     hitType: str
     ignitionChanceOverride: float
     impactRadius: float
-    impulseFalloffParams: ImpulseFalloffParams
+    impulseFalloffParams: Optional[ImpulseFalloffParams] = None
     keepAliveOnZeroDamage: bool
     minImpactRadius: float
     pierceabilityParams: PierceabilityParams
@@ -238,7 +238,6 @@ class FPSAmmo(UniversalData):
     damage_drop_min_damage: DamageDropMinDamage
     damage_drop_min_distance: DamageDropMinDistance
     damage_drop_per_meter: DamageDropPerMeter
-
 
 
 class FPSAmmoRaw(BaseModel):

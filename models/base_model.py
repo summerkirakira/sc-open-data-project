@@ -1,5 +1,7 @@
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import List, Optional, Literal
+from utils.localizer import localizer_cn, localizer_en
+from utils.shop_info import ShopInfo, get_shop_info_by_ref
 
 
 class UniversalData(BaseModel):
@@ -9,6 +11,16 @@ class UniversalData(BaseModel):
     description: Optional[str] = None
     chinese_description: Optional[str] = None
     ref: str
+    size: int = 0
+
+
+    class Damage(BaseModel):
+        damage_biochemical: float
+        damage_distortion: float
+        damage_energy: float
+        damage_physical: float
+        damage_stun: float
+        damage_thermal: float
 
 
 class SAttachableComponentParams(BaseModel):
@@ -259,6 +271,26 @@ class HeatStats(BaseModel):
     salvageModifier: SalvageModifier
 
 
+class LaunchParams(BaseModel):
+    class SpreadParams(BaseModel):
+        __type: str
+        attack: float
+        decay: float
+        firstAttack: float
+        max: float
+        min: float
+
+    __polymorphicType: str
+    __type: str
+    ammoCost: int
+    damageMultiplier: float
+    fireHelper: str
+    muzzleHelper: str
+    pelletCount: int
+    projectileType: str
+    soundRadius: float
+    spreadParams: SpreadParams
+
 class SCItemWeaponComponentParams(BaseModel):
     class WeaponRegenConsumerParams(BaseModel):
         __type: str
@@ -266,6 +298,40 @@ class SCItemWeaponComponentParams(BaseModel):
         regenerationCostPerBullet: float
         requestedAmmoLoad: float
         requestedRegenPerSec: float
+
+    class FireAction(BaseModel):
+        class SWeaponActionFireSingleParamsType(BaseModel):
+            fireRate: float
+            heatPerShot: float
+            aiShootingMode: str
+            localisedName: str
+            launchParams: LaunchParams
+
+        class SWeaponActionFireRapidParamsType(BaseModel):
+            fireRate: float
+            heatPerShot: float
+            aiShootingMode: str
+            localisedName: str
+            launchParams: LaunchParams
+
+        class SWeaponActionFireBurstParamsType(BaseModel):
+            fireRate: float
+            heatPerShot: float
+            aiShootingMode: str
+            cooldownTime: float
+            localisedName: str
+            launchParams: LaunchParams
+
+        class SWeaponActionFireChargedParamsType(BaseModel):
+
+            chargeTime: float
+            aiShootingMode: str
+            localisedName: str
+
+        SWeaponActionFireChargedParams: Optional[SWeaponActionFireChargedParamsType] = None
+        SWeaponActionFireBurstParams: Optional[SWeaponActionFireBurstParamsType] = None
+        SWeaponActionFireRapidParams: Optional[SWeaponActionFireRapidParamsType] = None
+        SWeaponActionFireSingleParams: Optional[SWeaponActionFireSingleParamsType] = None
 
     class ConnectionParams(BaseModel):
         class SWeaponStats(BaseModel):
@@ -564,6 +630,7 @@ class SCItemWeaponComponentParams(BaseModel):
         overpowerStats: SWeaponStats
         underpowerStats: SWeaponStats
 
+
     class WeaponAIData(BaseModel):
         class AiFiringActionParam(BaseModel):
             class SWeaponAIChargedParams(BaseModel):
@@ -610,6 +677,7 @@ class SCItemWeaponComponentParams(BaseModel):
     useAdsHelper: bool
     weaponAIData: WeaponAIData
     weaponRegenConsumerParams: Optional[WeaponRegenConsumerParams] = None
+    fireActions: List[FireAction]
 
 
 class SCItemClothingParams(BaseModel):
@@ -637,7 +705,7 @@ class SCItemClothingParams(BaseModel):
     TemperatureResistance: TemperatureResistance
 
 
-class SAmmoContainerComponentParams(BaseModel):
+class SAmmoContainerComponentParamsType(BaseModel):
     class AmmoCountFragment(BaseModel):
         __type: str
         forceWeaponController: bool
@@ -656,3 +724,230 @@ class SAmmoContainerComponentParams(BaseModel):
     maxAmmoCount: int
     maxRestockCount: int
     secondaryAmmoParamsRecord: str
+
+
+class PurchaseInfo(BaseModel):
+    name: str
+    purchaseType: str
+    shopInfo: None
+
+    @classmethod
+    def from_purchase_params(cls, purchase_params: Optional[SCItemPurchasableParamsType]) -> Optional['PurchaseInfo']:
+        if purchase_params is None:
+            return None
+        return PurchaseInfo(
+            name=localizer_cn.get(purchase_params.displayName),
+            purchaseType=localizer_cn.get(purchase_params.displayType),
+            shopInfo=None
+        )
+
+
+class MissileInfo(BaseModel):
+
+    damage: UniversalData.Damage
+    tracking_signal_type: Literal['CrossSection', 'Infrared', 'Electromagnetic']
+    speed: float
+    arm_time: float
+    lock_angle: float
+    lock_time: float
+    lock_range_min: float
+    lock_range_max: float
+    ignite_time: float
+    explosion_radius_min: float
+    explosion_radius_max: float
+
+    # shop_info: list[PurchaseInfo] = []
+
+
+class SCItemMissileParamsType(BaseModel):
+    class GCSParams(BaseModel):
+        class BoostPhase(BaseModel):
+
+            class MaxLinearAccelerationNegative(BaseModel):
+                __type: str
+                x: float
+                y: float
+                z: float
+
+            class MaxLinearAccelerationPositive(BaseModel):
+                __type: str
+                x: float
+                y: float
+                z: float
+
+            __type: str
+            angularSpeed: float
+            maxLinearAccelerationNegative: MaxLinearAccelerationNegative
+            maxLinearAccelerationPositive: MaxLinearAccelerationPositive
+            maxRotationAccel: float
+            pidAggression: float
+
+        class InterceptPhase(BaseModel):
+            class MaxLinearAccelerationNegative1(BaseModel):
+                __type: str
+                x: float
+                y: float
+                z: float
+
+            class MaxLinearAccelerationPositive1(BaseModel):
+                __type: str
+                x: float
+                y: float
+                z: float
+
+            __type: str
+            angularSpeed: float
+            maxLinearAccelerationNegative: MaxLinearAccelerationNegative1
+            maxLinearAccelerationPositive: MaxLinearAccelerationPositive1
+            maxRotationAccel: float
+            pidAggression: float
+
+        class TerminalPhase(BaseModel):
+            class MaxLinearAccelerationPositive2(BaseModel):
+                __type: str
+                x: float
+                y: float
+                z: float
+
+            class MaxLinearAccelerationNegative2(BaseModel):
+                __type: str
+                x: float
+                y: float
+                z: float
+
+            __type: str
+            angularSpeed: float
+            maxLinearAccelerationNegative: MaxLinearAccelerationNegative2
+            maxLinearAccelerationPositive: MaxLinearAccelerationPositive2
+            maxRotationAccel: float
+            pidAggression: float
+
+        boostPhase: BoostPhase
+        boostPhaseDuration: float
+        dumbfireRotationScale: float
+        fuelTankSize: float
+        interceptPhase: InterceptPhase
+        isDumbMissile: bool
+        linearSpeed: float
+        pidDerivativeTerm: float
+        pidIntegralTerm: float
+        pidProportionalTerm: float
+        terminalPhase: TerminalPhase
+        terminalPhaseEngagementAngle: float
+        terminalPhaseEngagementTime: float
+
+    class ExplosionParams(BaseModel):
+        class Damage(BaseModel):
+            DamageBiochemical: float
+            DamageDistortion: float
+            DamageEnergy: float
+            DamagePhysical: float
+            DamageStun: float
+            DamageThermal: float
+            __polymorphicType: str
+            __type: str
+
+        __type: str
+        angle: float
+        angleVertical: float
+        customMaterialEffect: str
+        damage: Damage
+        effectScale: float
+        effectScaleMax: float
+        effectScaleMin: float
+        friendlyFire: str
+        hitType: str
+        holeSize: float
+        maxPhysRadius: float
+        maxRadius: float
+        maxblurdist: float
+        minPhysRadius: float
+        minRadius: float
+        particleStrength: float
+        pressure: float
+        radarContactType: str
+        soundRadius: float
+        terrainHoleSize: float
+        useRandomScale: bool
+
+    class TargetingParams(BaseModel):
+        __type: str
+        allowDumbFiring: bool
+        dynamicLaunchZoneRecord: str
+        lockDecreaseRate: float
+        lockIncreaseRate: float
+        lockRangeMax: float
+        lockRangeMin: float
+        lockResolutionRadius: float
+        lockSignalAmplifier: float
+        lockTime: float
+        lockingAngle: float
+        minRatioForLock: float
+        signalResilienceMax: float
+        signalResilienceMin: float
+        trackingSignalMin: float
+        trackingSignalType: str
+
+    GCSParams: GCSParams
+    armTime: float
+    collisionDelayTime: float
+    enableLifetime: bool
+    explosionParams: ExplosionParams
+    explosionSafetyDistance: float
+    igniteTime: float
+    maxLifetime: float
+    projectileProximity: float
+    requiresLauncher: bool
+    targetingParams: TargetingParams
+
+    def to_missile_info(self) -> MissileInfo:
+        return MissileInfo(
+            damage=UniversalData.Damage(
+                damage_biochemical=self.explosionParams.damage.DamageBiochemical,
+                damage_distortion=self.explosionParams.damage.DamageDistortion,
+                damage_energy=self.explosionParams.damage.DamageEnergy,
+                damage_physical=self.explosionParams.damage.DamagePhysical,
+                damage_stun=self.explosionParams.damage.DamageStun,
+                damage_thermal=self.explosionParams.damage.DamageThermal
+            ),
+            tracking_signal_type=self.targetingParams.trackingSignalType,
+            speed=self.GCSParams.linearSpeed,
+            arm_time=self.armTime,
+            lock_angle=self.targetingParams.lockingAngle,
+            lock_time=self.targetingParams.lockTime,
+            lock_range_min=self.targetingParams.lockRangeMin,
+            lock_range_max=self.targetingParams.lockRangeMax,
+            ignite_time=self.igniteTime,
+            explosion_radius_min=self.explosionParams.minRadius,
+            explosion_radius_max=self.explosionParams.maxRadius
+        )
+
+
+class SItemPortContainerComponentParamsType(BaseModel):
+    class Port(BaseModel):
+        class SItemPortDef(BaseModel):
+
+            AttachmentPoints: List
+            Connections: List
+            DefaultWeaponGroup: str
+            DisabledPortLinks: List
+            DisplayName: str
+            Flags: str
+            InteractionPointSize: float
+            MaxSize: int
+            MinSize: int
+            Name: str
+            PortTags: str
+            RequiredPortTags: str
+            Tags: List
+            itemPortRules: List
+            linkedItemPorts: List
+
+        SItemPortDef: SItemPortDef
+
+    InternalHardpointLinks: List
+    InternalResourceLinks: List
+    PortFlags: str
+    PortTags: str
+    Ports: List[Port]
+    RequiredItemTags: str
