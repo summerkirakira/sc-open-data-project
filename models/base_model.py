@@ -22,6 +22,14 @@ class UniversalData(BaseModel):
         damage_stun: float
         damage_thermal: float
 
+    class DamageResistances(BaseModel):
+        damage_biochemical: float = 0
+        damage_distortion: float = 0
+        damage_energy: float = 0
+        damage_physical: float = 0
+        damage_stun: float = 0
+        damage_thermal: float = 0
+
 
 class SAttachableComponentParams(BaseModel):
     class AttachDef(BaseModel):
@@ -282,16 +290,17 @@ class LaunchParams(BaseModel):
 
     __polymorphicType: str
     __type: str
-    ammoCost: int
-    damageMultiplier: float
-    fireHelper: str
-    muzzleHelper: str
-    pelletCount: int
-    projectileType: str
-    soundRadius: float
-    spreadParams: SpreadParams
+    ammoCost: int = 1
+    # damageMultiplier: float
+    # fireHelper: str
+    # muzzleHelper: str
+    # pelletCount: int
+    # projectileType: str
+    # soundRadius: float
+    # spreadParams: SpreadParams
 
-class SCItemWeaponComponentParams(BaseModel):
+
+class SCItemWeaponComponentParamsType(BaseModel):
     class WeaponRegenConsumerParams(BaseModel):
         __type: str
         regenerationCooldown: float
@@ -328,10 +337,62 @@ class SCItemWeaponComponentParams(BaseModel):
             aiShootingMode: str
             localisedName: str
 
+        class SWeaponActionSequenceParamsType(BaseModel):
+            class SequenceEntry(BaseModel):
+                class SWeaponSequenceEntryParams(BaseModel):
+                    class WeaponAction(BaseModel):
+                        class LaunchParams(BaseModel):
+                            class SpreadParams(BaseModel):
+                                __type: str
+                                attack: float
+                                decay: float
+                                firstAttack: float
+                                max: float
+                                min: float
+
+                            __polymorphicType: str
+                            __type: str
+                            ammoCost: int
+                            damageMultiplier: float
+                            fireHelper: str
+                            muzzleHelper: str
+                            pelletCount: int
+                            projectileType: str
+                            soundRadius: float
+                            spreadParams: SpreadParams
+
+                        __polymorphicType: str
+                        __type: str
+                        aiShootingMode: str
+                        fireRate: int
+                        heatPerShot: float
+                        launchParams: LaunchParams
+                        localisedName: str
+                        switchFireModeAudioTrigger: SwitchFireModeAudioTrigger
+                        wearPerShot: float
+
+                    __type: str
+                    delay: float
+                    repetitions: int
+                    unit: str
+                    weaponAction: WeaponAction
+
+                SWeaponSequenceEntryParams: SWeaponSequenceEntryParams
+
+            aiShootingMode: str
+            effects: List
+            localisedName: str
+            mode: str
+            name: str
+            sequenceEntries: List[SequenceEntry]
+            uiBindingsTag: str
+
+
         SWeaponActionFireChargedParams: Optional[SWeaponActionFireChargedParamsType] = None
         SWeaponActionFireBurstParams: Optional[SWeaponActionFireBurstParamsType] = None
         SWeaponActionFireRapidParams: Optional[SWeaponActionFireRapidParamsType] = None
         SWeaponActionFireSingleParams: Optional[SWeaponActionFireSingleParamsType] = None
+        SWeaponActionSequenceParams: Optional[SWeaponActionSequenceParamsType] = None
 
     class ConnectionParams(BaseModel):
         class SWeaponStats(BaseModel):
@@ -742,7 +803,7 @@ class PurchaseInfo(BaseModel):
         )
 
 
-class MissileInfo(BaseModel):
+class MissileInfo(UniversalData):
 
     damage: UniversalData.Damage
     tracking_signal_type: Literal['CrossSection', 'Infrared', 'Electromagnetic']
@@ -755,6 +816,9 @@ class MissileInfo(BaseModel):
     ignite_time: float
     explosion_radius_min: float
     explosion_radius_max: float
+
+    manufacturer: str
+    size: int
 
     # shop_info: list[PurchaseInfo] = []
 
@@ -951,3 +1015,221 @@ class SItemPortContainerComponentParamsType(BaseModel):
     PortTags: str
     Ports: List[Port]
     RequiredItemTags: str
+
+
+class EntityComponentPowerConnection(BaseModel):
+    class MisfireEvents(BaseModel):
+        CriticalMisfires: List
+        MajorMisfires: List
+        MinorMisfires: List
+        __type: str
+
+    DecayRateOfEM: float
+    DisplayedInPoweredItemList: bool
+    IsOverclockable: bool
+    IsThrottleable: bool
+    MisfireEvents: MisfireEvents
+    MisfireItemTypeLocID: str
+    OverclockPerformance: float
+    OverclockThresholdMax: float
+    OverclockThresholdMin: float
+    OverpowerPerformance: float
+    PowerBase: float
+    PowerDraw: float
+    PowerToEM: float
+    SafeguardPriority: int
+    TimeToReachDrawRequest: float
+    WarningDelayTime: float
+    WarningDisplayTime: float
+    __polymorphicType: str
+    __type: str
+
+
+
+
+
+
+
+
+
+
+
+
+
+class DamageResistances(BaseModel):
+    class BiochemicalResistance(BaseModel):
+        Multiplier: float
+        Threshold: float
+        __type: str
+
+    class DistortionResistance(BaseModel):
+        Multiplier: float
+        Threshold: float
+        __type: str
+
+    class EnergyResistance(BaseModel):
+        Multiplier: float
+        Threshold: float
+        __type: str
+
+    class PhysicalResistance(BaseModel):
+        Multiplier: float
+        Threshold: float
+        __type: str
+
+    class StunResistance(BaseModel):
+        Multiplier: float
+        Threshold: float
+        __type: str
+
+    class ThermalResistance(BaseModel):
+        Multiplier: float
+        Threshold: float
+        __type: str
+
+    BiochemicalResistance: BiochemicalResistance
+    DistortionResistance: DistortionResistance
+    EnergyResistance: EnergyResistance
+    PhysicalResistance: PhysicalResistance
+    StunResistance: StunResistance
+    ThermalResistance: ThermalResistance
+
+
+class SHealthComponentParamsType(BaseModel):
+    ClientOnly: bool
+    DamageResistances: DamageResistances
+    DebrisGeometryTag: str
+    DestroyedGeometryTag: str
+    DetachFromEntityOnDeath: bool
+    DetachFromItemPortOnDeath: bool
+    ExplodedGeometryTag: str
+    ExplosionBone: str
+    ExplosionDelayTime: float
+    ExplosionRandomDelayRange: float
+    Health: float
+    IsRepairable: bool
+    IsSalvagable: bool
+    PropagateExplosionDamageToChildren: bool
+    PushDamageUpPartsHeirarchyWhenDead: bool
+    SerializedDamageMapPath: str
+    UnlockInteractionsOnDeath: bool
+    UseDirtShaderForDamage: bool
+    __polymorphicType: str
+    __type: str
+
+
+class HealthInfo(BaseModel):
+    health: float
+    damage_resistances: UniversalData.DamageResistances
+
+    @classmethod
+    def from_params(cls, params: Optional[SHealthComponentParamsType]) -> Optional['HealthInfo']:
+        if params is None:
+            return None
+        return HealthInfo(
+            health=params.Health,
+            damage_resistances=UniversalData.DamageResistances(
+                biochemical=params.DamageResistances.BiochemicalResistance.Threshold,
+                distortion=params.DamageResistances.DistortionResistance.Threshold,
+                energy=params.DamageResistances.EnergyResistance.Threshold,
+                physical=params.DamageResistances.PhysicalResistance.Threshold,
+                stun=params.DamageResistances.StunResistance.Threshold,
+                thermal=params.DamageResistances.ThermalResistance.Threshold
+            )
+        )
+
+
+
+
+class SDistortionParamsType(BaseModel):
+    DecayDelay: float
+    DecayRate: float
+    Maximum: float
+    PowerChangeOnlyAtMaxDistortion: bool
+    PowerRatioAtMaxDistortion: float
+    RecoveryRatio: float
+    WarningRatio: float
+
+
+class DistortionInfo(BaseModel):
+    decay_delay: float
+    decay_rate: float
+    maximum: float
+
+    @classmethod
+    def from_params(cls, params: Optional[SDistortionParamsType]) -> Optional['DistortionInfo']:
+        if params is None:
+            return None
+        return DistortionInfo(
+            decay_delay=params.DecayDelay,
+            decay_rate=params.DecayRate,
+            maximum=params.Maximum
+        )
+
+
+class EntityComponentHeatConnection(BaseModel):
+    Mass: float
+    MaxCoolingRate: float
+    MaxTemperature: float
+    MinTemperature: float
+    MisfireMaxTemperature: float
+    MisfireMinTemperature: float
+    OverclockThresholdMaxHeat: float
+    OverclockThresholdMinHeat: float
+    OverheatTemperature: float
+    OverpowerHeat: float
+    RecoveryTemperature: float
+    SpecificHeatCapacity: float
+    StartCoolingTemperature: float
+    StartIRTemperature: float
+    SurfaceArea: float
+    TemperatureToIR: float
+    ThermalConductivity: float
+    ThermalEnergyBase: float
+    ThermalEnergyDraw: float
+
+
+class HeatInfo(BaseModel):
+    mass: float
+    max_cooling_rate: float
+    max_temperature: float
+    min_temperature: float
+    misfire_max_temperature: float
+    misfire_min_temperature: float
+    overclock_threshold_max_heat: float
+    overclock_threshold_min_heat: float
+    overheat_temperature: float
+    overpower_heat: float
+    recovery_temperature: float
+    specific_heat_capacity: float
+    start_cooling_temperature: float
+    start_ir_temperature: float
+    surface_area: float
+    temperature_to_ir: float
+    thermal_conductivity: float
+    thermal_energy_base: float
+    thermal_energy_draw: float
+
+    @classmethod
+    def from_params(cls, params: EntityComponentHeatConnection):
+        return cls(
+            mass=params.Mass,
+            max_cooling_rate=params.MaxCoolingRate,
+            max_temperature=params.MaxTemperature,
+            min_temperature=params.MinTemperature,
+            misfire_max_temperature=params.MisfireMaxTemperature,
+            misfire_min_temperature=params.MisfireMinTemperature,
+            overclock_threshold_max_heat=params.OverclockThresholdMaxHeat,
+            overclock_threshold_min_heat=params.OverclockThresholdMinHeat,
+            overheat_temperature=params.OverheatTemperature,
+            overpower_heat=params.OverpowerHeat,
+            recovery_temperature=params.RecoveryTemperature,
+            specific_heat_capacity=params.SpecificHeatCapacity,
+            start_cooling_temperature=params.StartCoolingTemperature,
+            start_ir_temperature=params.StartIRTemperature,
+            surface_area=params.SurfaceArea,
+            temperature_to_ir=params.TemperatureToIR,
+            thermal_conductivity=params.ThermalConductivity,
+            thermal_energy_base=params.ThermalEnergyBase,
+            thermal_energy_draw=params.ThermalEnergyDraw
+        )

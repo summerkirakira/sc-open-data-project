@@ -1,4 +1,4 @@
-from .base_model import UniversalData, SAttachableComponentParams, SEntityPhysicsControllerParams, SCItemPurchasableParamsType, SCItemWeaponComponentParams, SItemPortContainerComponentParamsType
+from .base_model import UniversalData, SAttachableComponentParams, SEntityPhysicsControllerParams, SCItemPurchasableParamsType, SCItemWeaponComponentParamsType, SItemPortContainerComponentParamsType
 from pydantic import BaseModel, Field
 from typing import List, Optional, Annotated
 from utils.localizer import localizer_cn, localizer_en
@@ -27,6 +27,7 @@ class FPSWeapon(UniversalData):
     magazine: Optional[FPSMagazine]
     fire_modes: List[FireMode]
     ports: list[Port]
+    manufacturer: str = ""
 
 
 class FPSWeaponRaw(BaseModel):
@@ -37,7 +38,7 @@ class FPSWeaponRaw(BaseModel):
     class Components(BaseModel):
         SAttachableComponentParams: SAttachableComponentParams
         SEntityPhysicsControllerParams: SEntityPhysicsControllerParams
-        SCItemWeaponComponentParams: SCItemWeaponComponentParams
+        SCItemWeaponComponentParams: SCItemWeaponComponentParamsType
         SItemPortContainerComponentParams: SItemPortContainerComponentParamsType
         SCItemPurchasableParams: Annotated[Optional[SCItemPurchasableParamsType], Field(alias="SCItemPurchasableParams")] = None
 
@@ -97,7 +98,10 @@ class FPSWeaponRaw(BaseModel):
             micro_scu=micro_scu,
             magazine=magazine,
             size=self.Components.SAttachableComponentParams.AttachDef.Size,
-            fire_modes=fire_modes
+            fire_modes=fire_modes,
+            manufacturer=self.Components.SAttachableComponentParams.AttachDef.Manufacturer,
+            description=localizer_en.get(self.Components.SAttachableComponentParams.AttachDef.Localization.Description),
+            chinese_description=localizer_cn.get(self.Components.SAttachableComponentParams.AttachDef.Localization.Description)
         )
 
 
