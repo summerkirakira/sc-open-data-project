@@ -1233,3 +1233,201 @@ class HeatInfo(BaseModel):
             thermal_energy_base=params.ThermalEnergyBase,
             thermal_energy_draw=params.ThermalEnergyDraw
         )
+
+
+class SCItemSeatParamsType(BaseModel):
+    class ActorAttachment(BaseModel):
+        __type: str
+        boneName: str
+        stance: str
+        type: str
+
+    class View(BaseModel):
+        Default_Cockpit: Optional[str] = None
+        AEGS_Hammerhead_ThirdPersonFlight_1: Optional[str] = None
+        Global_OrbitEnterExit: Optional[str] = None
+
+    # QTViews: List
+    # __polymorphicType: str
+    # __type: str
+    # actorAttachment: ActorAttachment
+    # allowDeadOrUnconscious: bool
+    # allowRelaxedPose: bool
+    # armorMoveViewRestrictions: str
+    # availableOperatorModes: str
+    # controlTemplate: str
+    # dashboardAnimationDatabase: str
+    # dashboardScopeContext: str
+    # fpHeadAdjustmentRecord: str
+    # gforceHeadBobOverwriteRecord: str
+    # headTrackingPositionLimitOverwriteRecord: str
+    # landingView: str
+    # lookAheadOverwriteRecord: str
+    # maxPitch: float
+    # maxYaw: float
+    # minPitch: float
+    # minYaw: float
+    # seatFOV: str
+    # seatType: str
+    # setYawPitchLimits: bool
+    # supportPlayerAnimatedActions: bool
+    # transitionTemplate: str
+    # useAnimationBasedTransition: bool
+    # useSyncedEnslavement: bool
+    # userAnimationDatabase: str
+    # userScopeContext: str
+    # userSyncedScopeContext: str
+    # vehicleFragmentOverride: str
+    # vehicleScopeContext: str
+    # views: List[View]
+
+
+class SCItemShieldGeneratorParams(BaseModel):
+    class RegeneratingState(BaseModel):
+        __type: str
+        linkedInteractionStates: List
+        name: str
+
+    class ShieldAbsorptionItem(BaseModel):
+        class SShieldAbsorption(BaseModel):
+            Max: float
+            Min: float
+            __type: str
+
+        SShieldAbsorption: SShieldAbsorption
+
+    class ShieldResistanceItem(BaseModel):
+        class SShieldResistance(BaseModel):
+            Max: float
+            Min: float
+            __type: str
+
+        SShieldResistance: SShieldResistance
+
+    DamagedRegenDelay: float
+    DecayRatio: float
+    DownedRegenDelay: float
+    ElectricalChargeResistance: float
+    MaxShieldHealth: float
+    MaxShieldRegen: float
+    RegeneratingState: RegeneratingState
+    ReservePoolDrainRateRatio: float
+    ReservePoolInitialHealthRatio: float
+    ReservePoolMaxHealthRatio: float
+    ReservePoolRegenRateRatio: float
+    ShieldAbsorption: List[ShieldAbsorptionItem]
+    ShieldResistance: List[ShieldResistanceItem]
+
+
+class SCItemQuantumDriveParams(BaseModel):
+    class SplineJumpParams(BaseModel):
+        ShaderNodeEngageVelocity: float
+        ShaderNodeMaxStrengthVelocity: float
+        ShaderNodeShutdownVelocity: float
+        VFXEntryFlashVelocity: float
+        VFXExitEffectVelocity: float
+        VFXPinchEffectTime: float
+        VFXPinchMaxVelocity: float
+        VFXSpoolEndVelocity: float
+        VFXTrailStartVelocity: float
+        VFXTravelEffectEndVelocity: float
+        VFXTravelEffectStartVelocity: float
+        calibrationDelayInSeconds: float
+        calibrationProcessAngleLimit: float
+        calibrationRate: float
+        calibrationWarningAngleLimit: float
+        cooldownTime: float
+        driveSpeed: float
+        engageSpeed: float
+        interdictionEffectTime: float
+        maxCalibrationRequirement: float
+        minCalibrationRequirement: float
+        spoolUpTime: float
+        stageOneAccelRate: float
+        stageTwoAccelRate: float
+
+    class Params(BaseModel):
+        ShaderNodeEngageVelocity: float
+        ShaderNodeMaxStrengthVelocity: float
+        ShaderNodeShutdownVelocity: float
+        VFXEntryFlashVelocity: float
+        VFXExitEffectVelocity: float
+        VFXPinchEffectTime: float
+        VFXPinchMaxVelocity: float
+        VFXSpoolEndVelocity: float
+        VFXTrailStartVelocity: float
+        VFXTravelEffectEndVelocity: float
+        VFXTravelEffectStartVelocity: float
+        calibrationDelayInSeconds: float
+        calibrationProcessAngleLimit: float
+        calibrationRate: float
+        calibrationWarningAngleLimit: float
+        cooldownTime: float
+        driveSpeed: float
+        engageSpeed: float
+        interdictionEffectTime: float
+        maxCalibrationRequirement: float
+        minCalibrationRequirement: float
+        spoolUpTime: float
+        stageOneAccelRate: float
+        stageTwoAccelRate: float
+
+    class HeatParams(BaseModel):
+        __type: str
+        inFlightThermalEnergyDraw: float
+        postRampDownThermalEnergyDraw: float
+        preRampUpThermalEnergyDraw: float
+        rampDownThermalEnergyDraw: float
+        rampUpThermalEnergyDraw: float
+
+    disconnectRange: float
+    heatParams: HeatParams
+    jumpRange: float
+    params: Params
+    quantumFuelRequirement: float
+    splineJumpParams: SplineJumpParams
+    tracePoint: str
+
+    class SCItemCoolerParams(BaseModel):
+        CoolingRate: float
+        SuppressionHeatFactor: float
+        SuppressionIRFactor: float
+
+
+class SCItemCoolerParams(BaseModel):
+    CoolingRate: float
+    SuppressionHeatFactor: float
+    SuppressionIRFactor: float
+
+
+class SCItemFuelTankParams(BaseModel):
+    capacity: float
+    continueFuelAboveLevel: float
+    drainRate: float
+    fillRate: float
+    haltFuelBelowLevel: float
+    reserveCapacity: float
+
+
+class SCItemFuelIntakeParamsType(BaseModel):
+    fuelPushRate: float
+    minimumRate: float
+
+
+class SCItemMissileRackParamsType(BaseModel):
+    detachTrigger: str
+    detachVelocityForward: float
+    detachVelocityRight: float
+    detachVelocityUp: float
+    fragReadyUp: str
+    fragStowAway: str
+    igniteOnPylon: bool
+    launchDelay: float
+    rackTag: str
+    slotTags: List
+
+
+class SCItemInventoryContainerComponentParamsType(BaseModel):
+
+    canAutoStoreRestrictedItems: bool
+    containerParams: str
