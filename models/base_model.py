@@ -1431,3 +1431,135 @@ class SCItemInventoryContainerComponentParamsType(BaseModel):
 
     canAutoStoreRestrictedItems: bool
     containerParams: str
+
+
+class SCItemVehicleArmorParamsType(BaseModel):
+    class DamageMultiplier(BaseModel):
+        DamageBiochemical: float
+        DamageDistortion: float
+        DamageEnergy: float
+        DamagePhysical: float
+        DamageStun: float
+        DamageThermal: float
+
+
+    damageMultiplier: DamageMultiplier
+    signalCrossSection: float
+    signalElectromagnetic: float
+    signalInfrared: float
+
+
+class Loadout(BaseModel):
+    class Entry(BaseModel):
+        entityClassName: str
+        entityClassReference: str
+        itemPortName: str
+        loadout: Optional['Loadout'] = None
+
+    entries: List[Entry]
+
+
+class SEntityComponentDefaultLoadoutParamsType(BaseModel):
+    loadout: Loadout
+
+
+class VehicleComponentParams(BaseModel):
+    crewSize: int
+    inventoryContainerParams: str
+    manufacturer: str
+
+    class Box(BaseModel):
+        x: float
+        y: float
+        z: float
+
+    maxBoundingBoxSize: Box
+    vehicleCareer: str
+    vehicleDefinition: str
+    vehicleDescription: str
+    vehicleHullDamageNormalizationValue: float
+    vehicleImagePath: str
+    vehicleName: str
+    vehicleRole: str
+
+
+class SCItemThrusterParamsType(BaseModel):
+    fuelBurnRatePer10KNewton: float
+    thrustCapacity: float
+    thrusterAnimDriver: str
+    thrusterStrengthSmooth: float
+
+
+class IFCSParamsType(BaseModel):
+    class Vector3(BaseModel):
+        x: float
+        y: float
+        z: float
+
+    class Afterburner(BaseModel):
+        class Vector3(BaseModel):
+            x: float
+            y: float
+            z: float
+
+        __type: str
+        afterburnAccelMultiplier: Vector3
+        afterburnAccelMultiplierControlSurface: float
+        afterburnAngAccelMultiplier: Vector3
+        afterburnerCapacitorThresholdRatio: float
+        afterburnerSpoolUpTime: float
+        capacitorAfterburnerAngularCost: float
+        capacitorAfterburnerIdleCost: float
+        capacitorAfterburnerLinearCost: float
+        capacitorAssignmentInputOutputRegen: str
+        capacitorAssignmentInputOutputRegenNavMode: str
+        capacitorAssignmentInputOutputUsage: str
+        capacitorMax: float
+        capacitorRegenDelayAfterUse: float
+        capacitorRegenPerSec: float
+
+    afterburner: Afterburner
+    angularAccelDecay: float
+    attitudeLimiterEnabled: bool
+    boostSpeedBackward: float
+    boostSpeedForward: float
+    dragMultiplier: float
+    groundTurbulenceAmplitude: float
+    intoxicationModifierRef: str
+    liftMultiplier: float
+    linearAccelDecay: float
+    maxAngularVelocity: Vector3
+    maxSpeed: float
+    negativeAngularScale: Vector3
+    negativeLinearScale: Vector3
+    positiveAngularScale: Vector3
+    positiveLinearScale: Vector3
+    precisionLandingMultiplier: float
+    precisionMaxDistance: float
+    precisionMinDistance: float
+    refreshCachesOnLandingMode: bool
+    scmMaxDragMultiplier: float
+    scmSpeed: float
+    thrusterImbalanceMessage: str
+    torqueDistanceThreshold: float
+    torqueImbalanceMultiplier: float
+    trichordingLimiterEnabled: bool
+    turbulenceAmplitude: float
+
+
+class SInventoryParams(BaseModel):
+    class Capacity(BaseModel):
+        __polymorphicType: str
+        __type: str
+        centiSCU: int
+
+    __polymorphicType: str
+    __type: str
+    capacity: Capacity
+
+
+class SSCItemSelfDestructComponentParamsType(BaseModel):
+    damage: float
+    time: float
+    minRadius: float
+    radius: float

@@ -1,122 +1,57 @@
-from __future__ import annotations
-
-from typing import Any, Optional, List, Dict, Union
-
-from pydantic import BaseModel
-
-
-class LocationAudioPlayTrigger(BaseModel):
-    __polymorphicType: str
-    __type: str
-    audioTrigger: str
+from .base_model import UniversalData, SAttachableComponentParams, SEntityPhysicsControllerParams, SCItemPurchasableParamsType, SCItemWeaponComponentParamsType, SCItemShieldGeneratorParams, SItemPortContainerComponentParamsType
+from .base_model import SHealthComponentParamsType, SDistortionParamsType, HealthInfo, EntityComponentPowerConnection, EntityComponentHeatConnection
+from .base_model import SEntityComponentDefaultLoadoutParamsType, VehicleComponentParams
+from pydantic import BaseModel, Field
+from typing import List, Optional, Annotated
+from utils.localizer import localizer_cn, localizer_en
+from .fps_magazine import FPSMagazine
+from .utils import get_item_by_ref
+from utils.shop_info import ShopInfo, get_shop_info_by_ref
 
 
-class LocationAudioStopTrigger(BaseModel):
-    __polymorphicType: str
-    __type: str
-    audioTrigger: str
+from models.controller import Controller
+from models.armor import Armor
+from models.cargo_grid import CargoGrid
+from models.cooler import Cooler
+from models.fuel_intake import FuelIntake
+from models.fuel_tank import FuelTank
+from models.missile_rack import MissileRack
+from models.skin import Skin
+from models.power_plant import PowerPlant
+from models.qd import QuantumDrive
+from models.personal_storage import PersonalStorage
+from models.self_destruct import SelfDestruct
+from models.shield import Shield
+from models.thruster import Thruster
 
 
-class DisplayFeatures(BaseModel):
-    Callout1: str
-    Callout2: str
-    Callout3: str
-    FrontendBackground: str
-    History: str
-    LogoSimplifiedWhite: str
-    UIPriority: int
-    __type: str
-    locationAudioPlayTrigger: LocationAudioPlayTrigger
-    locationAudioStopTrigger: LocationAudioStopTrigger
+class Ship(UniversalData):
 
-
-class Localization(BaseModel):
-    Description: str
-    Name: str
-    ShortName: str
-    __type: str
-    displayFeatures: DisplayFeatures
-
-
-class InventoryOccupancyDimensions(BaseModel):
-    __type: str
-    x: float
-    y: float
-    z: float
-
-
-class InventoryOccupancyVolume(BaseModel):
-    __polymorphicType: str
-    __type: str
-    microSCU: int
-
-
-class MannequinTags(BaseModel):
-    __type: str
-    mannequinBaseTag: str
-    mannequinClassTag: str
-    mannequinTypeTag: str
-
-
-class AttachDef(BaseModel):
-    DisplayType: str
-    Grade: int
-    Localization: Localization
-    Manufacturer: str
-    RequiredTags: str
-    Size: int
-    SubType: str
-    Tags: str
-    Type: str
-    __type: str
-    ignoredAttachAxis: str
-    inheritParentManufacturer: bool
-    inventoryOccupancyDimensions: InventoryOccupancyDimensions
-    inventoryOccupancyDimensionsUIOverride: Any
-    inventoryOccupancyVolume: InventoryOccupancyVolume
-    mannequinTags: MannequinTags
-
-
-class SAttachableComponentParams(BaseModel):
-    AttachDef: AttachDef
-    __polymorphicType: str
-    __type: str
-    attachToTileItemPort: str
-    entityAttachParams: Any
-
-
-class SItemPortLoadoutEntryParams(BaseModel):
-    __type: str
-    entityClassName: str
-    entityClassReference: str
-    inventoryContainer: Any
-    itemPortName: str
-    loadout: Optional[Loadout]
-
-
-class Entry(BaseModel):
-    SItemPortLoadoutEntryParams: SItemPortLoadoutEntryParams
-
-
-class Loadout(BaseModel):
-    InventoryItems: List
-    WearRange: Any
-    __polymorphicType: str
-    __type: str
-    entries: List[Entry]
-
-
-class SEntityComponentDefaultLoadoutParams(BaseModel):
-    __polymorphicType: str
-    __type: str
-    loadout: Loadout
-
-
-class Components(BaseModel):
-    SAttachableComponentParams: SAttachableComponentParams
-    SEntityComponentDefaultLoadoutParams: SEntityComponentDefaultLoadoutParams
+    controller: Controller
+    manufacturer: str = ""
+    vehicle: VehicleComponentParams
+    armor: Armor
+    cargo: list[CargoGrid]
+    coolers: list[Cooler]
+    fuel_intakes: list[FuelIntake]
+    fuel_tanks: list[FuelTank]
+    missile_racks: list[MissileRack]
+    paints: list[Skin]
+    power_plants: list[PowerPlant]
+    qd: QuantumDrive
+    personal_storage: PersonalStorage
+    self_destruct: SelfDestruct
+    shields: list[Shield]
+    thrusts: list[Thruster]
 
 
 class ShipRaw(BaseModel):
-    Components: Components
+
+    class Components(BaseModel):
+        SAttachableComponentParams: SAttachableComponentParams
+        SCItemPurchasableParams: SCItemPurchasableParamsType
+        VehicleComponentParams: VehicleComponentParams
+        SEntityComponentDefaultLoadoutParams: Optional[SEntityComponentDefaultLoadoutParamsType] = None
+        SItemPortContainerComponentParams: Optional[SItemPortContainerComponentParamsType] = None
+
 

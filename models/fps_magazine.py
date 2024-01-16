@@ -5,6 +5,7 @@ from typing import List, Optional
 from utils.localizer import localizer_cn, localizer_en
 from .utils import get_item_by_ref
 from loguru import logger
+from utils.shop_info import ShopInfo, get_shop_info_by_ref
 
 
 class FPSMagazine(UniversalData):
@@ -18,6 +19,7 @@ class FPSMagazine(UniversalData):
     max_restock_count: int
     micro_scu: int
     mass: float
+    shop_info: list[ShopInfo]
 
 
 class FPSMagazineRaw(BaseModel):
@@ -44,6 +46,7 @@ class FPSMagazineRaw(BaseModel):
                 ref=self.ref,
                 path=self.path,
                 type=self.type,
+                size=self.Components.SAttachableComponentParams.AttachDef.Size,
                 name=localizer_en.get(self.Components.SAttachableComponentParams.AttachDef.Localization.Name),
                 chinese_name=localizer_cn.get(self.Components.SAttachableComponentParams.AttachDef.Localization.Name),
                 purchase_params=PurchaseInfo.from_purchase_params(self.Components.SCItemPurchasableParams),
@@ -55,13 +58,15 @@ class FPSMagazineRaw(BaseModel):
                 description=localizer_en.get(self.Components.SAttachableComponentParams.AttachDef.Localization.Description),
                 chinese_description=localizer_cn.get(self.Components.SAttachableComponentParams.AttachDef.Localization.Description),
                 mass=self.Components.SEntityPhysicsControllerParams.PhysType.Mass,
-                micro_scu=self.Components.SAttachableComponentParams.AttachDef.inventoryOccupancyVolume.microSCU
+                micro_scu=self.Components.SAttachableComponentParams.AttachDef.inventoryOccupancyVolume.microSCU,
+                shop_info=get_shop_info_by_ref(self.ref)
             )
         elif self.Components.SCItemMissileParams is not None:
             return FPSMagazine(
                 ref=self.ref,
                 path=self.path,
                 type=self.type,
+                size=self.Components.SAttachableComponentParams.AttachDef.Size,
                 name=localizer_en.get(self.Components.SAttachableComponentParams.AttachDef.Localization.Name),
                 chinese_name=localizer_cn.get(self.Components.SAttachableComponentParams.AttachDef.Localization.Name),
                 purchase_params=PurchaseInfo.from_purchase_params(self.Components.SCItemPurchasableParams),
@@ -75,7 +80,8 @@ class FPSMagazineRaw(BaseModel):
                 chinese_description=localizer_cn.get(
                     self.Components.SAttachableComponentParams.AttachDef.Localization.Description),
                 mass=self.Components.SEntityPhysicsControllerParams.PhysType.Mass,
-                micro_scu=self.Components.SAttachableComponentParams.AttachDef.inventoryOccupancyVolume.microSCU
+                micro_scu=self.Components.SAttachableComponentParams.AttachDef.inventoryOccupancyVolume.microSCU,
+                shop_info=get_shop_info_by_ref(self.ref)
             )
 
 

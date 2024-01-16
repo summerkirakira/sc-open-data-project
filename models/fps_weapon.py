@@ -4,6 +4,7 @@ from typing import List, Optional, Annotated
 from utils.localizer import localizer_cn, localizer_en
 from .fps_magazine import FPSMagazine
 from .utils import get_item_by_ref
+from utils.shop_info import ShopInfo, get_shop_info_by_ref
 
 
 class FPSWeapon(UniversalData):
@@ -28,6 +29,7 @@ class FPSWeapon(UniversalData):
     fire_modes: List[FireMode]
     ports: list[Port]
     manufacturer: str = ""
+    shop_info: list[ShopInfo]
 
 
 class FPSWeaponRaw(BaseModel):
@@ -101,7 +103,8 @@ class FPSWeaponRaw(BaseModel):
             fire_modes=fire_modes,
             manufacturer=self.Components.SAttachableComponentParams.AttachDef.Manufacturer,
             description=localizer_en.get(self.Components.SAttachableComponentParams.AttachDef.Localization.Description),
-            chinese_description=localizer_cn.get(self.Components.SAttachableComponentParams.AttachDef.Localization.Description)
+            chinese_description=localizer_cn.get(self.Components.SAttachableComponentParams.AttachDef.Localization.Description),
+            shop_info=get_shop_info_by_ref(self.ref)
         )
 
 
