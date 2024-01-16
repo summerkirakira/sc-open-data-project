@@ -27,12 +27,12 @@ class SCItemCargoGridParamsType(BaseModel):
     transformDependant: bool
 
 
-
 class CargoGrid(UniversalData):
 
     sub_cargo_grid: Optional[SubCargoGrid]
     manufacturer: str = ""
     size: int
+    path: str = ""
 
 
 class CargoGridRaw(BaseModel):

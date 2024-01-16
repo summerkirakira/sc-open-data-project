@@ -1,7 +1,6 @@
 from pydantic import BaseModel
 from typing import List, Optional, Literal
-from utils.localizer import localizer_cn, localizer_en
-from utils.shop_info import ShopInfo, get_shop_info_by_ref
+# from utils.localizer import localizer_cn, localizer_en
 
 
 class UniversalData(BaseModel):
@@ -12,6 +11,8 @@ class UniversalData(BaseModel):
     chinese_description: Optional[str] = None
     ref: str
     size: int = 0
+    path: str = ""
+    type: str = ""
 
 
     class Damage(BaseModel):
@@ -1018,18 +1019,11 @@ class SItemPortContainerComponentParamsType(BaseModel):
 
 
 class EntityComponentPowerConnection(BaseModel):
-    class MisfireEvents(BaseModel):
-        CriticalMisfires: List
-        MajorMisfires: List
-        MinorMisfires: List
-        __type: str
 
     DecayRateOfEM: float
     DisplayedInPoweredItemList: bool
     IsOverclockable: bool
     IsThrottleable: bool
-    MisfireEvents: MisfireEvents
-    MisfireItemTypeLocID: str
     OverclockPerformance: float
     OverclockThresholdMax: float
     OverclockThresholdMin: float
@@ -1451,10 +1445,13 @@ class SCItemVehicleArmorParamsType(BaseModel):
 
 class Loadout(BaseModel):
     class Entry(BaseModel):
-        entityClassName: str
-        entityClassReference: str
-        itemPortName: str
-        loadout: Optional['Loadout'] = None
+        class SItemPortLoadoutEntryParams(BaseModel):
+            entityClassName: str
+            entityClassReference: str
+            itemPortName: str
+            loadout: Optional['Loadout'] = None
+
+        SItemPortLoadoutEntryParams: SItemPortLoadoutEntryParams
 
     entries: List[Entry]
 
@@ -1481,6 +1478,7 @@ class VehicleComponentParams(BaseModel):
     vehicleImagePath: str
     vehicleName: str
     vehicleRole: str
+
 
 
 class SCItemThrusterParamsType(BaseModel):
@@ -1563,3 +1561,22 @@ class SSCItemSelfDestructComponentParamsType(BaseModel):
     time: float
     minRadius: float
     radius: float
+
+
+class SGeometryResourceParams(BaseModel):
+    class Geometry(BaseModel):
+
+        class SubGeometry(BaseModel):
+
+            class SGeometryNodeParams(BaseModel):
+
+                Tags: str
+
+            SGeometryNodeParams: SGeometryNodeParams
+
+        SubGeometry: list[SubGeometry]
+
+    Geometry: Geometry
+
+
+

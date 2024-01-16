@@ -13,6 +13,7 @@ class Controller(UniversalData):
     data: Optional[IFCSParamsType]
     manufacturer: str = ""
     size: int
+    path: str = ""
 
 
 class ControllerRaw(BaseModel):

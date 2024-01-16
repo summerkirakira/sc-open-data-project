@@ -1,6 +1,6 @@
 from utils.file_manager import sc, get_json_dir
 from models.cargo_grid import CargoGridRaw, CargoGrid
-from sub_cargo_grid_loader import load_sub_cargo_grid
+from .sub_cargo_grid_loader import load_sub_cargo_grid
 from utils.file_manager import load_raw_data_from_dict
 from loguru import logger
 import json

@@ -10,7 +10,7 @@ json_dir = get_json_dir()
 
 def load_missile_rack_from_p4k() -> list[MissileRack]:
     """Load a missile_rack from a P4K file"""
-    missile_rack_path = "libs/foundry/records/entities/scitem/ships/missileracks/*"
+    missile_rack_path = "libs/foundry/records/entities/scitem/ships/missile_racks/*"
     missile_rack_files = sc.datacore.search_filename(missile_rack_path)
     missile_rack_list = []
     for missile_rack_file in missile_rack_files:
