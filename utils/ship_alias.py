@@ -41,6 +41,13 @@ def get_ship_alias_by_id(alias_id: int) -> Optional[ShipAlis]:
             return item
 
 
+def get_ship_alias_by_name(name: str) -> Optional[ShipAlis]:
+    ship_alias = get_ship_alias()
+    for item in ship_alias:
+        if item.name == name:
+            return item
+
+
 def get_ship_name_binding() -> list[ShipNameBinding]:
     with (global_path_data / 'ship_name_binding.json').open('r', encoding='utf-8', errors='ignore') as f:
         data = json.loads(f.read())

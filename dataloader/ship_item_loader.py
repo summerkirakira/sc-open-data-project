@@ -13,6 +13,10 @@ from .personal_storage_loader import load_personal_storage
 from .self_destruct_loader import load_self_destruct
 from .shield_loader import load_shield
 from .thruster_loader import load_thruster
+from .vehicle_weapon_loader import load_vehicle_weapon
+from .manufacturer_loader import load_manufacture
+from .weapon_regen_pool_loader import load_weapon_regen_pool
+from .turret_loader import load_turret
 from models.base_model import UniversalData
 from typing import Optional
 
@@ -34,6 +38,11 @@ class ShipItemLoader:
         self.self_destruct = load_self_destruct()
         self.shield = load_shield()
         self.thruster = load_thruster()
+        self.vehicle_weapon = load_vehicle_weapon()
+        self.manufacturer = load_manufacture()
+        self.weapon_regen_pool = load_weapon_regen_pool()
+        self.turret = load_turret()
+        self.weapons = load_vehicle_weapon()
 
     def get_item_by_localname(self, localname: str):
         for member in self.__dict__.values():

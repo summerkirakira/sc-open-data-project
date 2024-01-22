@@ -5,6 +5,7 @@ from loguru import logger
 from .converter import convert_dds_to_png
 import json
 from zipfile import ZipInfo
+from typing import Optional
 
 
 root_dir = Path(__file__).parent.parent
@@ -67,6 +68,7 @@ def load_raw_data_from_dict(ship_data: dict) -> dict:
 
 def get_zip_info_ignore_case(zip_file, name):
     """Get the info for a file in a zip file, ignoring case"""
+    name = name.replace("\\", "/")
     for info in zip_file.infolist():
         if info.filename.lower() == name.lower():
             return info
@@ -91,6 +93,13 @@ def extract_image(filename: str, target_path: Path):
     file_info = get_zip_info_ignore_case(sc.p4k, filename)
     sc.p4k.extract(file_info, get_cache_dir())
     convert_dds_to_png(get_cache_dir() / filename, target_path)
+
+
+def get_manufacturer(ship_item_loader, reference: str):
+    for manufacture in ship_item_loader.manufacturer:
+        if manufacture.ref == reference:
+            return manufacture
+    return None
 
 
 sc_path = Path(r"D:\Programs\RSI\StarCitizen\LIVE")

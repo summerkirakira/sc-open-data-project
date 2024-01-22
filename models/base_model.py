@@ -1579,4 +1579,45 @@ class SGeometryResourceParams(BaseModel):
     Geometry: Geometry
 
 
+class WeaponRegenPoolType(BaseModel):
+    ammoLoad: float
+    capacitorAssignmentInputOutputAmmoLoad: str
+    capacitorAssignmentInputOutputRegen: str
+    capacitorAssignmentInputOutputRegenNavMode: str
+    regenFillRate: float
+    respectsCapacitorAssignments: bool
+
+
+class InputOutputMapping(BaseModel):
+    __type: str
+
+    class Point(BaseModel):
+        class Vec2(BaseModel):
+            x: float
+            y: float
+
+        Vec2: Vec2
+
+    points: List[Point]
+
+
+class SCItemShieldEmitterParamsType(BaseModel):
+    FaceType: str
+    MaxElectricalChargeDamageRate: float
+    MaxReallocation: float
+    ReconfigurationCooldown: float
+    capacitorAssignmentInputOutputRegen: str
+    capacitorAssignmentInputOutputRegenNavMode: str
+    capacitorAssignmentInputOutputResistance: str
+    regenerateEffectTag: str
+    shieldEffectType: str
+    shieldMeshDeprecated: str
+    regenMapping: Optional[InputOutputMapping] = None
+    resistanceMapping: Optional[InputOutputMapping] = None
+
+
+
+
+
+
 

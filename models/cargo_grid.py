@@ -56,6 +56,17 @@ class CargoGridRaw(BaseModel):
 
         if self.Components.SCItemInventoryContainerComponentParams is not None:
             sub_cargo_grid = get_item_by_ref(sub_cargo_grids, self.Components.SCItemInventoryContainerComponentParams.containerParams)
+            if sub_cargo_grid is None:
+                sub_cargo_grid = SubCargoGrid(
+                    ref="",
+                    path="",
+                    type="PLACEHOLDER",
+                    grid=InteriorDimensions(
+                        x=0,
+                        y=0,
+                        z=0
+                    )
+                )
         if self.Components.SCItemCargoGridParams is not None:
             sub_cargo_grid = SubCargoGrid(
                 ref="",

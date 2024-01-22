@@ -1,6 +1,7 @@
 from utils.file_manager import sc, get_json_dir
 from models.controller import ControllerRaw, Controller
 from utils.file_manager import load_raw_data_from_dict
+from .cap_assignment_loader import load_cap_assignment
 from loguru import logger
 import json
 
@@ -13,6 +14,7 @@ def load_controller_from_p4k() -> list[Controller]:
     controller_path = "libs/foundry/records/entities/scitem/ships/controller/*"
     controller_files = sc.datacore.search_filename(controller_path)
     controller_list = []
+    cap_assignment_list = load_cap_assignment()
     for controller_file in controller_files:
         controller_info = sc.datacore.record_to_dict(controller_file)
         try:
@@ -22,7 +24,8 @@ def load_controller_from_p4k() -> list[Controller]:
             logger.error(f"Failed to load {controller_file}: {e}")
             continue
 
-        controller = controller_raw.to_controller()
+
+        controller = controller_raw.to_controller(cap_assignment_list)
         controller_list.append(controller)
 
         logger.success(f"Loaded {controller.chinese_name} successfully")

@@ -2,6 +2,8 @@ import imageio
 from PIL import Image
 from pathlib import Path
 from loguru import logger
+from PIL import ImageFile
+ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 
 def convert_dds_to_png(dds_path: Path, png_path: Path):

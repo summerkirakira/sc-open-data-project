@@ -19,6 +19,9 @@ from models.personal_storage import PersonalStorage
 from models.self_destruct import SelfDestruct
 from models.shield import Shield
 from models.thruster import Thruster
+from models.turret import Turret
+from models.weapon_regen_pool import WeaponRegenPool
+from models.weapon_model import VehicleWeapon
 from dataloader.ship_item_loader import ShipItemLoader
 from utils.shop_info import get_shop_info_by_ref, ShopInfo
 from utils.ship_alias import ShipAlis, ShipNameBinding, get_ship_alias_by_id, get_ship_name_binding_by_name
@@ -35,9 +38,15 @@ class Hull(BaseModel):
     health: int
 
 
+class Flare(BaseModel):
+    number: int
+    lifetime: float
+
+
 class Ship(UniversalData):
 
-    controller: Optional[Controller]
+    mass: float
+    controllers: list[Controller]
     manufacturer: str = ""
     vehicle: VehicleComponentParams
     armor: Armor
@@ -57,12 +66,19 @@ class Ship(UniversalData):
     ship_alias: Optional[ShipAlis]
     ship_name_binding: Optional[ShipNameBinding]
     hulls: list[Hull]
+    turrets: list[Turret]
+
+    flare: Flare
+
+    weapon_regen_pool: Optional[WeaponRegenPool]
+    weapons: list[VehicleWeapon]
+    is_real_ship: bool = True
 
     @classmethod
     def load_from_cache(cls, loader: ShipItemLoader, data: dict) -> 'Ship':
         new_data = data.copy()
         for key in data:
-            if key in ['shop_info', 'vehicle', 'ship_alias', 'ship_name_binding', 'hulls']:
+            if key in ['shop_info', 'vehicle', 'ship_alias', 'ship_name_binding', 'hulls', 'flare']:
                 continue
             if isinstance(data[key], int):
                 continue
@@ -83,7 +99,7 @@ class Ship(UniversalData):
         data = self.model_dump()
         new_data = data.copy()
         for key in data:
-            if key in ['shop_info', 'vehicle', 'ship_alias', 'ship_name_binding', 'hulls']:
+            if key in ['shop_info', 'vehicle', 'ship_alias', 'ship_name_binding', 'hulls', 'flare']:
                 continue
             if isinstance(data[key], int):
                 continue
@@ -127,7 +143,7 @@ class ShipRaw(BaseModel):
         manufacturer = self.Components.SAttachableComponentParams.AttachDef.Manufacturer
         size = self.Components.SAttachableComponentParams.AttachDef.Size
 
-        controller = None
+        controllers = []
         armor = None
         cargos = []
         coolers = []
@@ -141,9 +157,14 @@ class ShipRaw(BaseModel):
         self_destruct = None
         shields = []
         thrusts = []
+        turrets = []
+        weapons = []
+        weapon_regen_pool = None
+
+        hulls, mass = get_vehicle_definition(self.Components.VehicleComponentParams.vehicleDefinition)
 
         try:
-            hulls = [Hull(**item) for item in get_vehicle_definition(self.Components.VehicleComponentParams.vehicleDefinition)]
+            hulls = [Hull(**item) for item in hulls]
         except Exception as e:
             logger.error(f'get_vehicle_definition error: {e}')
             hulls = []
@@ -161,7 +182,7 @@ class ShipRaw(BaseModel):
                     continue
 
                 if isinstance(ship_item, Controller):
-                    controller = ship_item
+                    controllers.append(ship_item)
                 elif isinstance(ship_item, Armor):
                     armor = ship_item
                 elif isinstance(ship_item, CargoGrid):
@@ -188,6 +209,13 @@ class ShipRaw(BaseModel):
                     shields.append(ship_item)
                 elif isinstance(ship_item, Thruster):
                     thrusts.append(ship_item)
+                elif isinstance(ship_item, Turret):
+                    turrets.append(ship_item)
+                elif isinstance(ship_item, VehicleWeapon):
+                    weapons.append(ship_item)
+                elif isinstance(ship_item, WeaponRegenPool):
+                    weapon_regen_pool = ship_item
+
 
         for geometry in self.Components.SGeometryResourceParams.Geometry.SubGeometry:
             paint = loader.get_item_by_localname(geometry.SGeometryNodeParams.Tags)
@@ -209,9 +237,11 @@ class ShipRaw(BaseModel):
             path=self.path,
             type=self.Components.SAttachableComponentParams.AttachDef.Type,
 
+            mass=mass,
+
             manufacturer=manufacturer,
             size=size,
-            controller=controller,
+            controllers=controllers,
             armor=armor,
             cargos=cargos,
             coolers=coolers,
@@ -238,7 +268,16 @@ class ShipRaw(BaseModel):
             ship_alias=ship_alias,
             ship_name_binding=ship_name_binding,
 
-            hulls=hulls
+            hulls=hulls,
+            turrets=turrets,
+
+            flare=Flare(
+                number=0,
+                lifetime=8.,
+            ),
+
+            weapons=weapons,
+            weapon_regen_pool=weapon_regen_pool,
         )
 
 

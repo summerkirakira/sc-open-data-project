@@ -1,6 +1,6 @@
 from utils.file_manager import sc, load_raw_data_from_dict, get_json_dir
 from models.weapon_model import VehicleWeaponRaw, VehicleWeapon
-from vehicle_ammo_loader import load_vehicle_ammo
+from .vehicle_ammo_loader import load_vehicle_ammo
 from loguru import logger
 import json
 

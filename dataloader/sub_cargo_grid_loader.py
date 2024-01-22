@@ -1,6 +1,5 @@
 from utils.file_manager import sc, get_json_dir
 from models.sub_cargo_grid import SubCargoGridRaw, SubCargoGrid
-from utils.file_manager import load_raw_data_from_dict
 from loguru import logger
 import json
 
@@ -13,6 +12,9 @@ def load_sub_cargo_grid_from_p4k() -> list[SubCargoGrid]:
     sub_cargo_grid_path = "libs/foundry/records/inventorycontainers/ships/*"
     sub_cargo_grid_files = sc.datacore.search_filename(sub_cargo_grid_path)
     sub_cargo_grid_list = []
+    sub_cargo_grid_path_2 = "libs/foundry/records/inventorycontainers/cargogrid/*"
+    sub_cargo_grid_files_2 = sc.datacore.search_filename(sub_cargo_grid_path_2)
+    sub_cargo_grid_files.extend(sub_cargo_grid_files_2)
     for sub_cargo_grid_file in sub_cargo_grid_files:
         sub_cargo_grid_info = sc.datacore.record_to_dict(sub_cargo_grid_file)
         try:

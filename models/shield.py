@@ -14,6 +14,8 @@ class Shield(UniversalData):
     manufacturer: str = ""
     size: int
     grade: int
+    
+    health: float
     regen: float
     regen_delay: float
     down_regen_delay: float
@@ -43,6 +45,7 @@ class ShieldRaw(BaseModel):
         EntityComponentPowerConnection: EntityComponentPowerConnection
         EntityComponentHeatConnection: EntityComponentHeatConnection
 
+
     Components: Components
 
     def to_shield(self) -> Shield:
@@ -70,7 +73,8 @@ class ShieldRaw(BaseModel):
             manufacturer=manufacturer,
             size=size,
             grade=grade,
-            regen=regen,
+            health=self.Components.SCItemShieldGeneratorParams.MaxShieldHealth,
+            regen=self.Components.SCItemShieldGeneratorParams.MaxShieldRegen,
             regen_delay=regen_delay,
             down_regen_delay=down_regen_delay,
             absorption_physical_min=absorption_physical_min,

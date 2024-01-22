@@ -60,10 +60,6 @@ class ManufactureRaw(BaseModel):
     def to_manufacture(self) -> Manufacture:
         """Convert a raw manufacture to a manufacture"""
 
-        logo_path = ""
-        logo_full_color_path = ""
-        logo_simplified_white_path = ""
-
         if self.Logo != "":
             logo_path = data_dir / f"{self.ref}.logo.png"
             extract_image(self.Logo, logo_path)
@@ -76,9 +72,9 @@ class ManufactureRaw(BaseModel):
 
         return Manufacture(
             logo=Manufacture.Logo(
-                logo=str(logo_path),
-                logo_full_color=str(logo_full_color_path),
-                logo_simplified_raw=str(logo_simplified_white_path)
+                logo=str(f"{self.ref}.logo.png"),
+                logo_full_color=str(f"{self.ref}.logo_full_color.png"),
+                logo_simplified_raw=str(f"{self.ref}.logo_simplified_white.png")
             ),
             name=localizer_en.get(self.Localization.Name),
             chinese_name=localizer_cn.get(self.Localization.Name),

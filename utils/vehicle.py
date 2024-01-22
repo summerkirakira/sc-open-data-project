@@ -2,6 +2,12 @@ from scdatatools import StarCitizen
 from .file_manager import sc, get_zip_info_ignore_case
 from scdatatools.engine.cryxml import etree_from_cryxml_string
 from xml.etree import ElementTree
+from pydantic import BaseModel
+from typing import Tuple
+
+
+class ShipDefinition(BaseModel):
+    name: str
 
 
 def load_vehicle_definition(path: str) -> ElementTree:
@@ -14,11 +20,13 @@ def load_vehicle_definition(path: str) -> ElementTree:
     return data
 
 
-def get_vehicle_definition(path: str) -> list[dict]:
+def get_vehicle_definition(path: str) -> Tuple[list[dict], float]:
     """Get a vehicle definition from a P4K file"""
     data = load_vehicle_definition(f'data/{path}')
 
     hull_health = []
+
+    mass = float(data.find('Parts/Part').attrib['mass'].replace('\u202c', ''))
 
     for part in data.find('Parts/Part/Parts'):
         if 'damageMax' in part.attrib:
@@ -26,4 +34,4 @@ def get_vehicle_definition(path: str) -> list[dict]:
                 'name': part.attrib['name'],
                 'health': float(part.attrib['damageMax'])
             })
-    return hull_health
+    return hull_health, mass

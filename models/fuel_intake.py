@@ -11,6 +11,7 @@ class FuelIntake(UniversalData):
 
     data: Optional[SCItemFuelIntakeParamsType] = None
     manufacturer: str = ""
+    power: EntityComponentPowerConnection
     size: int
 
 
@@ -22,6 +23,7 @@ class FuelIntakeRaw(BaseModel):
     class Components(BaseModel):
         SAttachableComponentParams: SAttachableComponentParams
         SCItemFuelIntakeParams: Optional[SCItemFuelIntakeParamsType] = None
+        EntityComponentPowerConnection: EntityComponentPowerConnection
 
     Components: Components
 
@@ -29,6 +31,7 @@ class FuelIntakeRaw(BaseModel):
         manufacturer = self.Components.SAttachableComponentParams.AttachDef.Manufacturer
         size = self.Components.SAttachableComponentParams.AttachDef.Size
         grade = self.Components.SAttachableComponentParams.AttachDef.Grade
+        power = self.Components.EntityComponentPowerConnection
 
         return FuelIntake(
             ref=self.ref,
@@ -38,6 +41,7 @@ class FuelIntakeRaw(BaseModel):
             manufacturer=manufacturer,
             size=size,
             grade=grade,
+            power=power,
 
             name=localizer_en.get(self.Components.SAttachableComponentParams.AttachDef.Localization.Name),
             chinese_name=localizer_cn.get(self.Components.SAttachableComponentParams.AttachDef.Localization.Name),

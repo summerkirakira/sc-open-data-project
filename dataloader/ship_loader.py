@@ -28,7 +28,7 @@ def load_ship_from_p4k(ship_item_loader: ShipItemLoader) -> list[Ship]:
             ship = ship_raw.to_ship(ship_item_loader)
         except Exception as e:
             logger.error(f"Failed to load {ship_file}: {e}")
-            raise e
+            continue
         ship_list.append(ship)
 
         logger.success(f"Loaded {ship.chinese_name} successfully")

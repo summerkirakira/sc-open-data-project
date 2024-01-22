@@ -1,4 +1,4 @@
-from .base_model import UniversalData, SAttachableComponentParams, SEntityPhysicsControllerParams, SCItemPurchasableParamsType, SCItemWeaponComponentParamsType, SItemPortContainerComponentParamsType
+from .base_model import UniversalData, SAttachableComponentParams, EntityComponentPowerConnection, SEntityPhysicsControllerParams, SCItemPurchasableParamsType, SCItemWeaponComponentParamsType, SItemPortContainerComponentParamsType
 from .base_model import SHealthComponentParamsType, SDistortionParamsType, SCItemMissileRackParamsType
 from pydantic import BaseModel, Field
 from typing import List, Optional, Annotated
@@ -18,6 +18,7 @@ class MissileRack(UniversalData):
     ports: list[Port]
     manufacturer: str = ""
     shop_info: list[ShopInfo]
+    power: EntityComponentPowerConnection
 
 
 class MissileRackRaw(BaseModel):
@@ -28,6 +29,7 @@ class MissileRackRaw(BaseModel):
     class Components(BaseModel):
         SAttachableComponentParams: SAttachableComponentParams
         SItemPortContainerComponentParams: SItemPortContainerComponentParamsType
+        EntityComponentPowerConnection: EntityComponentPowerConnection
 
 
     Components: Components
@@ -52,6 +54,7 @@ class MissileRackRaw(BaseModel):
                 size=self.Components.SAttachableComponentParams.AttachDef.Size,
                 ports=ports,
                 manufacturer=self.Components.SAttachableComponentParams.AttachDef.Manufacturer,
+                power=self.Components.EntityComponentPowerConnection,
 
                 name=localizer_en.get(self.Components.SAttachableComponentParams.AttachDef.Localization.Name),
                 chinese_name=localizer_cn.get(self.Components.SAttachableComponentParams.AttachDef.Localization.Name),
