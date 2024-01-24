@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from typing import List, Optional, Literal
-# from utils.localizer import localizer_cn, localizer_en
+from utils.localizer import localizer_cn, localizer_en
 
 
 class UniversalData(BaseModel):
@@ -1505,7 +1505,7 @@ class IFCSParamsType(BaseModel):
         afterburnAccelMultiplierControlSurface: float
         afterburnAngAccelMultiplier: Vector3
         afterburnerCapacitorThresholdRatio: float
-        afterburnerSpoolUpTime: float
+        # afterburnerSpoolUpTime: float
         capacitorAfterburnerAngularCost: float
         capacitorAfterburnerIdleCost: float
         capacitorAfterburnerLinearCost: float
@@ -1541,7 +1541,7 @@ class IFCSParamsType(BaseModel):
     thrusterImbalanceMessage: str
     torqueDistanceThreshold: float
     torqueImbalanceMultiplier: float
-    trichordingLimiterEnabled: bool
+    # trichordingLimiterEnabled: bool
     turbulenceAmplitude: float
 
 
