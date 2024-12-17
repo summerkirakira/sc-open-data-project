@@ -63,6 +63,8 @@ def load_raw_data_from_dict(ship_data: dict) -> dict:
     """Load a P4K file from the given path"""
     ship_data["Components"] = convert_list_to_dict(ship_data["Components"])
     ship_data["StaticEntityClassData"] = convert_list_to_dict(ship_data["StaticEntityClassData"])
+    if "EntityComponentHeatConnection" not in ship_data["Components"]:
+        ship_data["Components"]["EntityComponentHeatConnection"] = None
     return ship_data
 
 
@@ -102,7 +104,7 @@ def get_manufacturer(ship_item_loader, reference: str):
     return None
 
 
-sc_path = Path(r"D:\Programs\RSI\StarCitizen\LIVE")
+sc_path = Path(r"D:\RSI\StarCitizen\LIVE")
 sc = load_sc(sc_path)
 
 

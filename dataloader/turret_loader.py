@@ -10,10 +10,10 @@ json_dir = get_json_dir()
 
 def load_turret_from_p4k() -> list[Turret]:
     """Load a turret from a P4K file"""
-    turret_path = "libs/foundry/records/entities/scitem/ships/turret/*"
-    turret_path_2 = "libs/foundry/records/entities/scitem/ships/weapon_mounts/*"
-    turret_files = sc.datacore.search_filename(turret_path)
-    turret_files_2 = sc.datacore.search_filename(turret_path_2)
+    turret_path = "libs/foundry/records/entities/scitem/ships/turret/"
+    turret_path_2 = "libs/foundry/records/entities/scitem/ships/weapon_mounts/"
+    turret_files = sc.datacore.search_filename(turret_path, mode="startswith")
+    turret_files_2 = sc.datacore.search_filename(turret_path_2, mode="startswith")
     turret_files.extend(turret_files_2)
     turret_list = []
     for turret_file in turret_files:

@@ -19,18 +19,20 @@ class Turret(UniversalData):
     ports: list[Port]
     is_personnel: bool = False
     manufacturer: str = ""
+    loadout: list[str] = []
 
 
 class TurretRaw(BaseModel):
     ref: str = Field(..., alias='__id')
     path: str = Field(..., alias='__path')
     type: str = Field(..., alias='__type')
+    loadout: list[str] = []
 
     class Components(BaseModel):
         SAttachableComponentParams: SAttachableComponentParams
         SEntityPhysicsControllerParams: SEntityPhysicsControllerParams
         SItemPortContainerComponentParams: SItemPortContainerComponentParamsType
-        SHealthComponentParams: SHealthComponentParamsType
+        # SHealthComponentParams: SHealthComponentParamsType
         SDistortionParams: Optional[SDistortionParamsType] = None
         SCItemSeatParams: Optional[SCItemSeatParamsType] = None
 
@@ -67,6 +69,11 @@ class TurretRaw(BaseModel):
             micro_scu=self.Components.SAttachableComponentParams.AttachDef.inventoryOccupancyVolume.microSCU,
             size=self.Components.SAttachableComponentParams.AttachDef.Size,
             ports=ports,
-            is_personnel=is_personnel
+            is_personnel=is_personnel,
+            loadout=self.loadout
         )
+
+    def attach_weapons(self, weapons: list[str]):
+        self.loadout = weapons
+        return self
 

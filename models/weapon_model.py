@@ -17,7 +17,7 @@ class VehicleWeapon(FPSWeapon):
     health_info: Optional[HealthInfo]
     ammo: Optional[VehicleAmmo]
     shop_info: list[ShopInfo]
-    heat: HeatInfo
+    heat: Optional[HeatInfo]
     distortion: Optional[DistortionInfo]
     magazine: int = 0
 
@@ -30,10 +30,10 @@ class VehicleWeaponRaw(BaseModel):
         SItemPortContainerComponentParams: SItemPortContainerComponentParamsType
         SAmmoContainerComponentParams: Optional[SAmmoContainerComponentParamsType] = None
         SCItemPurchasableParams: Annotated[Optional[SCItemPurchasableParamsType], Field(alias="SCItemPurchasableParams")] = None
-        EntityComponentPowerConnection: EntityComponentPowerConnection
-        SHealthComponentParams: SHealthComponentParamsType
+        EntityComponentPowerConnection: Optional[EntityComponentPowerConnection]
+        SHealthComponentParams: Optional[SHealthComponentParamsType]
         SDistortionParams: Optional[SDistortionParamsType] = None
-        EntityComponentHeatConnection: EntityComponentHeatConnection
+        EntityComponentHeatConnection: Optional[EntityComponentHeatConnection]
 
     Components: Components
     ref: str = Field(..., alias='__id')
@@ -108,8 +108,8 @@ class VehicleWeaponRaw(BaseModel):
                 shop_info=shop_info,
                 size=self.Components.SAttachableComponentParams.AttachDef.Size,
                 fire_modes=fire_modes,
-                health_info=HealthInfo.from_params(self.Components.SHealthComponentParams),
-                heat=HeatInfo.from_params(self.Components.EntityComponentHeatConnection),
+                health_info=HealthInfo.from_params(self.Components.SHealthComponentParams) if self.Components.SHealthComponentParams else None,
+                heat=HeatInfo.from_params(self.Components.EntityComponentHeatConnection) if self.Components.EntityComponentHeatConnection else None,
                 distortion=DistortionInfo.from_params(self.Components.SDistortionParams),
                 manufacturer=self.Components.SAttachableComponentParams.AttachDef.Manufacturer,
                 description=localizer_en.get(

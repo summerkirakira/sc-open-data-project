@@ -29,7 +29,7 @@ def get_vehicle_definition(path: str) -> Tuple[list[dict], float]:
     mass = float(data.find('Parts/Part').attrib['mass'].replace('\u202c', ''))
 
     for part in data.find('Parts/Part/Parts'):
-        if 'damageMax' in part.attrib:
+        if 'damageMax' in part.attrib and part.attrib['damageMax'] is not None:
             hull_health.append({
                 'name': part.attrib['name'],
                 'health': float(part.attrib['damageMax'])

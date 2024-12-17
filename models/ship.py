@@ -35,7 +35,7 @@ class ItemRef(BaseModel):
 
 class Hull(BaseModel):
     name: str
-    health: int
+    health: float
 
 
 class Flare(BaseModel):
@@ -109,12 +109,21 @@ class Ship(UniversalData):
                 continue
             if isinstance(data[key], list):
                 new_data[key] = []
-                for item in data[key]:
-                    new_data[key].append(
-                        {
-                            'ref': item['ref'],
-                        }
-                    )
+                if key == "turrets" or key == "missile_racks":
+                    for item in data[key]:
+                        new_data[key].append(
+                            {
+                                'ref': item['ref'],
+                                'loadout': item['loadout'],
+                            }
+                        )
+                else:
+                    for item in data[key]:
+                        new_data[key].append(
+                            {
+                                'ref': item['ref'],
+                            }
+                        )
             elif data[key] is not None:
                 new_data[key] = {
                     'ref': data[key]['ref'],
@@ -171,13 +180,20 @@ class ShipRaw(BaseModel):
 
         if self.Components.VehicleComponentParams is not None:
             self.Components.VehicleComponentParams.vehicleCareer = localizer_cn.get(self.Components.VehicleComponentParams.vehicleCareer)
+            self.Components.VehicleComponentParams.vehicleCareer = localizer_cn.get(self.Components.VehicleComponentParams.vehicleCareer)
             self.Components.VehicleComponentParams.vehicleName = localizer_cn.get(self.Components.VehicleComponentParams.vehicleName)
             self.Components.VehicleComponentParams.vehicleDescription = localizer_cn.get(self.Components.VehicleComponentParams.vehicleDescription)
             self.Components.VehicleComponentParams.vehicleRole = localizer_cn.get(self.Components.VehicleComponentParams.vehicleRole)
 
         if self.Components.SEntityComponentDefaultLoadoutParams.loadout is not None:
             for item in self.Components.SEntityComponentDefaultLoadoutParams.loadout.entries:
-                ship_item = loader.get_item_by_localname(item.SItemPortLoadoutEntryParams.entityClassName)
+                if item.SItemPortLoadoutEntryParams.entityClassName == "" and item.SItemPortLoadoutEntryParams.entityClassReference == '00000000-0000-0000-0000-000000000000':
+                    continue
+                if item.SItemPortLoadoutEntryParams.entityClassName == "":
+                    ship_item = loader.get_item_by_ref(item.SItemPortLoadoutEntryParams.entityClassReference)
+                else:
+                    ship_item = loader.get_item_by_localname(item.SItemPortLoadoutEntryParams.entityClassName)
+
                 if ship_item is None:
                     continue
 
@@ -194,6 +210,11 @@ class ShipRaw(BaseModel):
                 elif isinstance(ship_item, FuelTank):
                     fuel_tanks.append(ship_item)
                 elif isinstance(ship_item, MissileRack):
+                    weapons_attached = []
+                    if item.SItemPortLoadoutEntryParams.loadout is not None:
+                        for weapon in item.SItemPortLoadoutEntryParams.loadout.entries:
+                            weapons_attached.append(weapon.SItemPortLoadoutEntryParams.entityClassReference)
+                    ship_item.loadout = weapons_attached
                     missile_racks.append(ship_item)
                 elif isinstance(ship_item, Skin):
                     paints.append(ship_item)
@@ -210,7 +231,12 @@ class ShipRaw(BaseModel):
                 elif isinstance(ship_item, Thruster):
                     thrusts.append(ship_item)
                 elif isinstance(ship_item, Turret):
+                    weapons_attached = []
+                    if item.SItemPortLoadoutEntryParams.loadout is not None:
+                        for weapon in item.SItemPortLoadoutEntryParams.loadout.entries:
+                            weapons_attached.append(weapon.SItemPortLoadoutEntryParams.entityClassReference)
                     turrets.append(ship_item)
+                    ship_item.loadout = weapons_attached
                 elif isinstance(ship_item, VehicleWeapon):
                     weapons.append(ship_item)
                 elif isinstance(ship_item, WeaponRegenPool):

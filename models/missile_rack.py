@@ -19,6 +19,7 @@ class MissileRack(UniversalData):
     manufacturer: str = ""
     shop_info: list[ShopInfo]
     power: EntityComponentPowerConnection
+    loadout: list[str] = []
 
 
 class MissileRackRaw(BaseModel):

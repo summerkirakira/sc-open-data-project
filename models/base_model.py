@@ -991,11 +991,10 @@ class SCItemMissileParamsType(BaseModel):
 class SItemPortContainerComponentParamsType(BaseModel):
     class Port(BaseModel):
         class SItemPortDef(BaseModel):
-
             AttachmentPoints: List
             Connections: List
             DefaultWeaponGroup: str
-            DisabledPortLinks: List
+            # DisabledPortLinks: List
             DisplayName: str
             Flags: str
             InteractionPointSize: float
@@ -1301,7 +1300,7 @@ class SCItemShieldGeneratorParams(BaseModel):
     DamagedRegenDelay: float
     DecayRatio: float
     DownedRegenDelay: float
-    ElectricalChargeResistance: float
+    # ElectricalChargeResistance: float
     MaxShieldHealth: float
     MaxShieldRegen: float
     RegeneratingState: RegeneratingState
@@ -1518,7 +1517,6 @@ class IFCSParamsType(BaseModel):
 
     afterburner: Afterburner
     angularAccelDecay: float
-    attitudeLimiterEnabled: bool
     boostSpeedBackward: float
     boostSpeedForward: float
     dragMultiplier: float
